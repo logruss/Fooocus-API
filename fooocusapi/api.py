@@ -12,8 +12,22 @@ from fooocusapi.routes.generate_v1 import secure_router as generate_v1
 from fooocusapi.routes.generate_v2 import secure_router as generate_v2
 from fooocusapi.routes.query import secure_router as query
 
+from contextlib import asynccontextmanager
+from external.runpod_status import startup_event
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await startup_event()
+    yield
+
+
+app = FastAPI(
+    docs_url=None,  # Disable Swagger UI at /docs
+    redoc_url=None,  # Disable ReDoc at /redoc
+    openapi_url=None,  # Disable OpenAPI schema at /openapi.json
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
