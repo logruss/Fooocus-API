@@ -20,6 +20,7 @@ from PIL.PngImagePlugin import PngInfo
 
 from fooocusapi.utils.logger import logger
 
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))
 
 output_dir = os.path.abspath(os.path.join(
     os.path.dirname(__file__), '../..', 'outputs', 'files'))
@@ -137,7 +138,13 @@ def get_file_serve_url(filename: str | None) -> str | None:
     """
     if filename is None:
         return None
+
     filename = filename.replace('\\', '/')
-    if 'RUNPOD_PUBLIC_URL' in os.environ:
-        return os.getenv("RUNPOD_PUBLIC_URL") + '/files/' + filename
+    public_url_file = os.path.join(root_dir, 'public_url.txt')
+
+    if os.path.exists(public_url_file):
+        with open(public_url_file, 'r') as f:
+            public_url = f.read().strip()
+        return public_url + '/files/' + filename
+
     return STATIC_SERVER_BASE + filename
