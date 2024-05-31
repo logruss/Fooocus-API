@@ -137,4 +137,7 @@ def get_file_serve_url(filename: str | None) -> str | None:
     """
     if filename is None:
         return None
-    return STATIC_SERVER_BASE + filename.replace('\\', '/')
+    filename = filename.replace('\\', '/')
+    if 'RUNPOD_PUBLIC_URL' in os.environ:
+        return os.getenv("RUNPOD_PUBLIC_URL") + '/files/' + filename
+    return STATIC_SERVER_BASE + filename
